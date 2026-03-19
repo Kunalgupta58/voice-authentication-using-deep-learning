@@ -1,0 +1,6 @@
+﻿Initializing SpeechBrain ResNet model on CPU...
+Error loading ECAPA-TDNN model: [WinError 1314] A required privilege is not held by the client: 'C:\\Users\\gupta\\.cache\\huggingface\\hub\\models--speechbrain--spkrec-ecapa-voxceleb\\snapshots\\0f99f2d0ebe89ac095bcc5903c4dd8f72b367286\\label_encoder.txt' -> 'C:\\Users\\gupta\\Desktop\\final voice autth\\backend\\pretrained_models\\spkrec-ecapa-voxceleb\\label_encoder.ckpt'
+Initializing SpeechBrain ResNet model on CPU...
+Error loading ECAPA-TDNN model: [WinError 1314] A required privilege is not held by the client: 'C:\\Users\\gupta\\.cache\\huggingface\\hub\\models--speechbrain--spkrec-ecapa-voxceleb\\snapshots\\0f99f2d0ebe89ac095bcc5903c4dd8f72b367286\\label_encoder.txt' -> 'C:\\Users\\gupta\\Desktop\\final voice autth\\backend\\pretrained_models\\spkrec-ecapa-voxceleb\\label_encoder.ckpt'
+Classifier status: False
+Classifier is None!
