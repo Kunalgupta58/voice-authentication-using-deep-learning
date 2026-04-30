@@ -1,16 +1,22 @@
 import logging
+import time
+from datetime import timedelta
 from fastapi import APIRouter, Depends, UploadFile, File, Form, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
 from pydantic import BaseModel
 
+from ..auth import create_challenge_token, verify_challenge_token
 from ..database import get_db
 from ..services.auth_service import register_user_service, login_user_service
 from ..rate_limiter import limiter
 
+
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+CHALLENGE_TTL_SECONDS = 90
 
 class LoginResponse(BaseModel):
     access_token: str
@@ -21,6 +27,8 @@ class LoginResponse(BaseModel):
 
 @router.post("/api/register")
 @limiter.limit("5/minute")
+
+
 async def register_user(
     request: Request,
     username: str = Form(...),
@@ -83,24 +91,36 @@ async def get_liveness_phrase():
     phrase_template = secrets.choice(phrases)
     final_phrase = phrase_template.format(code=secure_code)
     
-    # In a full deployment, `challenge_id` is cached in Redis with a strict TTL
+    # Stateless challenge token avoids process-local cache issues across worker forks.
     challenge_id = str(uuid.uuid4())
-    
+    challenge_token = create_challenge_token(
+        challenge_id,
+        expires_delta=timedelta(seconds=CHALLENGE_TTL_SECONDS),
+    )
+
     return {
         "phrase": final_phrase,
-        "challenge_id": challenge_id,
-        "expires_in": 60  # Client must send audio within 60 seconds
+        "challenge_id": challenge_token,
+        "expires_in": CHALLENGE_TTL_SECONDS,
     }
 
 @router.post("/api/login", response_model=LoginResponse)
 @limiter.limit("10/minute")
+
+
 async def login(
     request: Request,
     username: Optional[str] = Form(None),
+    challenge_id: Optional[str] = Form(None),
     audio: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
     try:
+        if not challenge_id:
+            raise HTTPException(status_code=401, detail="Missing liveness challenge.")
+
+        verify_challenge_token(challenge_id)
+
         audio_bytes = await audio.read()
         result = await login_user_service(audio_bytes, username, db)
         return LoginResponse(**result)
