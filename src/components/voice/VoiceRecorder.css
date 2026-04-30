@@ -1,0 +1,187 @@
+.vr-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.75rem;
+    width: 100%;
+}
+
+/* ── Phrase card ── */
+.vr-phrase {
+    width: 100%;
+    background: rgba(0, 212, 255, 0.04);
+    border: 1px solid rgba(0, 212, 255, 0.15);
+    border-left: 3px solid var(--accent-primary);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+}
+
+.vr-phrase-tag {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--accent-primary);
+    text-transform: uppercase;
+    margin-bottom: 0.65rem;
+}
+
+.vr-phrase-text {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.65;
+    color: var(--text-primary);
+    font-style: italic;
+}
+
+/* ── Orb ── */
+.vr-orb-wrap {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vr-orb {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    z-index: 3;
+    position: relative;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.9), rgba(79, 112, 232, 0.9));
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+    transition: background 0.4s ease;
+}
+
+.vr-orb-success .vr-orb {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(5, 150, 105, 0.9));
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+}
+
+.vr-orb-error .vr-orb {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9), rgba(185, 28, 28, 0.9));
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    20%,
+    60% {
+        transform: translateX(-6px);
+    }
+
+    40%,
+    80% {
+        transform: translateX(6px);
+    }
+}
+
+/* Pulse rings */
+.vr-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--accent-primary);
+    animation: pulse-ring 2s ease-out infinite;
+    z-index: 1;
+}
+
+.vr-ring-1 {
+    width: 100px;
+    height: 100px;
+}
+
+.vr-ring-2 {
+    width: 130px;
+    height: 130px;
+    animation-delay: 0.6s;
+    opacity: 0.5;
+}
+
+/* Scan line inside orb area */
+.vr-scanline {
+    position: absolute;
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.vr-scanline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8), transparent);
+    animation: scan 2s linear infinite;
+}
+
+/* ── Waveform bars ── */
+.vr-wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 54px;
+}
+
+.vr-bar {
+    display: inline-block;
+    width: 3px;
+    background: linear-gradient(to top, var(--accent-primary), var(--accent-secondary));
+    border-radius: 2px;
+    height: 100%;
+    transform-origin: center bottom;
+    transform: scaleY(0.15);
+    animation: bar-dance 0.6s ease-in-out infinite alternate;
+    transition: opacity 0.3s ease;
+}
+
+/* ── Status text ── */
+.vr-status {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.01em;
+}
+
+.vr-timer {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    background: rgba(0, 212, 255, 0.12);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    color: var(--accent-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Actions ── */
+.vr-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.vr-action-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}

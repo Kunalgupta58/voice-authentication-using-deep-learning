@@ -1,0 +1,124 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.01em;
+    outline: none;
+    white-space: nowrap;
+}
+
+/* Shimmer overlay on hover */
+.btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
+    background-size: 200%;
+    background-position: 200%;
+    transition: background-position 0.5s ease;
+    pointer-events: none;
+}
+
+.btn:hover::before {
+    background-position: -200%;
+}
+
+/* Sizes */
+.btn-sm {
+    font-size: 0.8125rem;
+    padding: 8px 16px;
+    border-radius: 9px;
+}
+
+.btn-md {
+    font-size: 0.9375rem;
+    padding: 13px 24px;
+}
+
+.btn-lg {
+    font-size: 1rem;
+    padding: 15px 32px;
+    border-radius: 14px;
+}
+
+/* Variants */
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #4f70e8 100%);
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(0, 212, 255, 0.3), 0 1px 0 rgba(255, 255, 255, 0.12) inset;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 32px rgba(0, 212, 255, 0.5), 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.btn-secondary {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    border-color: rgba(0, 212, 255, 0.4);
+    background: rgba(0, 212, 255, 0.06);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+    color: var(--text-primary);
+    border-color: var(--glass-border);
+    background: var(--glass-bg-light);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Disabled */
+.btn-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: saturate(0.5);
+    pointer-events: none;
+}
+
+/* Loading spinner */
+.btn-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-icon {
+    flex-shrink: 0;
+}
+
+.w-full {
+    width: 100%;
+}

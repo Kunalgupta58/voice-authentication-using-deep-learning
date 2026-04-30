@@ -1,0 +1,89 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+}
+
+.field-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.field-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(10, 19, 40, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0 16px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.field-wrap::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 13px;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.field-wrap:focus-within {
+    border-color: transparent;
+    background: rgba(0, 212, 255, 0.05);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08);
+}
+
+.field-wrap:focus-within::after {
+    opacity: 1;
+}
+
+.field-wrap.field-error {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.04);
+}
+
+.field-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.field-wrap:focus-within .field-icon {
+    color: var(--accent-primary);
+}
+
+.field-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    font-family: inherit;
+    padding: 14px 0;
+}
+
+.field-input::placeholder {
+    color: var(--text-muted);
+}
+
+.field-msg-error {
+    font-size: 0.78rem;
+    color: var(--error);
+}
+
+.field-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
