@@ -1,0 +1,172 @@
+.reg-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 96px 1.5rem 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.reg-wrapper {
+    width: 100%;
+    max-width: 620px;
+}
+
+/* Card inner (overrides GlassCard default padding for more control) */
+.reg-wrapper .gcard-inner {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+/* Header */
+.reg-header-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    gap: 1rem;
+}
+
+.reg-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.reg-step-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    color: var(--accent-primary);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    flex-shrink: 0;
+}
+
+.reg-sub {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+/* Content area */
+.reg-content {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Username step */
+.reg-username-step {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Enrollment tips */
+.reg-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tip {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Saved samples */
+.reg-samples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sample-pill {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 5px 14px;
+    border-radius: 9999px;
+    animation: fadeSlideUp 0.3s ease both;
+}
+
+/* Footer */
+.reg-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+/* In-card switcher link */
+.reg-switch {
+    text-align: center;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    padding-top: 0.25rem;
+}
+
+.reg-switch-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent-primary);
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.reg-switch-btn:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .reg-wrapper .gcard-inner {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .reg-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* ── Page switcher (below card, no overlap) ── */
+.page-switch-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.page-switch-btn {
+    background: transparent;
+    border: none;
+    color: var(--accent-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.page-switch-btn:hover {
+    text-decoration: underline;
+}
