@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 # Confidence threshold
 # Cosine similarity is 0.0-1.0, multiplied by 100 for display.
-# Users must score >= 80.00% to receive a JWT token.
-MATCH_THRESHOLD = 0.80
+# Users must score >= 75.00% to receive a JWT token.
+MATCH_THRESHOLD = 0.75
 CONFIDENCE_THRESHOLD_PCT = MATCH_THRESHOLD * 100
 
 
