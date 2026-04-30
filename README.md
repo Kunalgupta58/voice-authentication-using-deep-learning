@@ -1,231 +1,115 @@
-# Voice Authentication System
+---
+title: VoiceKey Biometric Auth
+emoji: "🎤"
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+---
 
-A deep learning-based voice authentication system using MFCC feature extraction and cosine similarity matching.
+# VoiceKey: Biometric Voice Authentication System
 
-## System Architecture
+A full-stack voice biometric authentication app with React frontend and FastAPI backend. It uses SpeechBrain ECAPA-TDNN for speaker verification plus liveness checks to reject replay or synthetic audio.
 
-```
-Clean Audio → Normalize → Trim Silence → MFCC Features → Embedding Vector → Similarity Matching
-```
+## Deployment Target
+This project is ready to deploy as a Hugging Face Space using a custom Docker container.
 
-### Pipeline Stages:
-1. **Clean**: Load audio at 16kHz sample rate
-2. **Normalized**: Scale audio to [-1, 1] range
-3. **Trimmed**: Remove silence using energy-based detection
-4. **MFCC**: Extract 40 Mel-Frequency Cepstral Coefficients
-5. **Embedding Vector**: Convert to fixed-length representation
-6. **Verification**: Use cosine similarity with configurable threshold
+- Frontend: React + Vite statically built into `dist`
+- Backend: FastAPI with model serving and static frontend hosting
+- Database: Configurable by `DATABASE_URL`, including Neon Postgres
+- Model: `speechbrain/spkrec-ecapa-voxceleb` loaded at runtime
+- Audio: `ffmpeg` support provided in the Docker container
 
-## Project Structure
+## Hugging Face Spaces + Neon Deployment
+### What is already supported
+- `Dockerfile` is configured for HF Spaces
+- `PORT=7860` is exposed and used in the runtime command
+- `PRELOAD_MODEL=0` is set by default for faster startup
+- `CORS_ORIGINS=*` is enabled in the container for the Spaces frontend
+- `DATABASE_URL` is read from the environment and supports Neon
+- `postgres://` URIs are automatically rewritten to `postgresql://`
 
-```
-Voice Authentication/
-├── audio_processing.py      # Audio feature extraction
-├── embedding.py             # Embedding generation from dataset
-├── authentication.py        # Voice verification & similarity matching
-├── train.py                 # Generate embeddings from dataset
-├── verify.py                # Verify unknown voice samples
-├── demo.py                  # Complete workflow demonstration
-├── config.py                # Configuration parameters
-├── requirements.txt         # Python dependencies
-├── create_env.ps1          # PowerShell setup script
-├── data/
-│   └── kunal/              # Training dataset (audio files)
-└── models/                 # Generated embeddings (created during training)
-```
+### Required environment variables
+Create a Hugging Face secret or `.env` with:
 
-## Quick Start
-
-### 1. Setup Environment
-
-Run PowerShell (recommended):
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-.\.venv\Scripts\pip.exe install --upgrade pip
-.\.venv\Scripts\pip.exe install -r requirements.txt
+```ini
+DATABASE_URL=postgresql://<username>:<password>@<host>:<port>/<database>
+SECRET_KEY=your-super-secret-key
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+PRELOAD_MODEL=0
+CORS_ORIGINS=*
+WEB_CONCURRENCY=1
+MODEL_CACHE_DIR=/tmp/spkrec-ecapa-voxceleb
+TEMP_AUDIO_DIR=/tmp/voicekey_temp_audio
 ```
 
-Or use the bundled script:
+> For Neon, use the connection string provided by your Neon dashboard.
 
-```powershell
-./create_env.ps1
+### Hugging Face Space setup steps
+1. Push this repository to GitHub.
+2. Create a new Hugging Face Space.
+3. Select `Docker` as the SDK.
+4. Connect the repo or upload the source.
+5. Add required secrets for `DATABASE_URL`, `SECRET_KEY`, and optional settings.
+6. Deploy.
+
+### Notes for Neon
+- Neon provides a Postgres-compatible connection string.
+- The app uses SQLAlchemy and `psycopg2-binary` to connect.
+- Set `DATABASE_URL` in HF Spaces secrets to the Neon URI.
+
+## Local Docker deployment
+
+Build and run locally:
+
+```bash
+docker build -t voicekey-app .
+docker run -p 7860:7860 \
+  -e DATABASE_URL="postgresql://<user>:<pass>@<host>:<port>/<db>" \
+  -e SECRET_KEY="super-secret" \
+  -e PRELOAD_MODEL=0 \
+  voicekey-app
 ```
 
-### 2. Train the System
+## Local development
 
-Generate embeddings from your voice dataset:
+Install dependencies:
 
-```powershell
-.\.venv\Scripts\python.exe train.py
+```bash
+python -m pip install -r requirements.txt
+npm install
+npm run build
 ```
 
-Expected output:
-```
-Processing 50 audio files...
-✓ sample_001.wav
-✓ sample_002.wav
-...
-Embeddings shape: (50, 40)
-Embeddings saved to models/kunal_embeddings.pkl
+Run backend locally:
+
+```bash
+python backend/main.py
 ```
 
-### 3. Verify Voice Samples
+Open `http://127.0.0.1:8000` after startup.
 
-Test if a voice sample matches the registered speaker:
+## How the Neon integration works
+- `backend/config.py` reads `DATABASE_URL`
+- If the URL begins with `postgres://`, it is rewritten to `postgresql://`
+- `backend/database.py` uses the same URL for SQLAlchemy
+- `psycopg2-binary` is included in `requirements.txt`
 
-```powershell
-.\.venv\Scripts\python.exe verify.py data/kunal/sample.wav
-```
+## Important deployment details
+- `Dockerfile` installs `ffmpeg` and `libsndfile1` so WebM audio can be converted in the container.
+- `backend/main.py` serves the static frontend from `dist` if present.
+- `PRELOAD_MODEL=0` prevents heavy model download on startup; the model loads lazily on first request.
+- `WEB_CONCURRENCY=1` is recommended for Hugging Face Spaces to reduce memory usage.
 
-Output:
-```
-Verification Result:
-  Status: ✓ VERIFIED
-  Confidence: 0.8543
-  Threshold: 0.7000
-```
+## API Overview
+- `GET /api/health`
+- `GET /api/liveness-phrase`
+- `POST /api/register`
+- `POST /api/login`
+- `GET /api/admin/users`
+- `DELETE /api/admin/users/{user_id}`
 
-### 4. Run Demo
-
-See the complete workflow:
-
-```powershell
-.\.venv\Scripts\python.exe demo.py
-```
-
-## Module Usage
-
-### Audio Processing
-
-```python
-from audio_processing import load_and_trim, normalize_audio, extract_mfcc
-
-# Load and process audio
-audio, sr = load_and_trim("voice.wav")
-audio = normalize_audio(audio)
-
-# Extract MFCC embedding
-embedding = extract_mfcc("voice.wav", n_mfcc=40)
-# Returns: numpy array of shape (40,)
-```
-
-### Generate Embeddings
-
-```python
-from embedding import EmbeddingGenerator
-
-generator = EmbeddingGenerator(n_mfcc=40)
-embeddings = generator.generate_from_folder("data/kunal")
-generator.save_embeddings("models/embeddings.pkl")
-```
-
-### Voice Verification
-
-```python
-from embedding import EmbeddingGenerator
-from authentication import VoiceAuthenticator
-import joblib
-
-# Load reference embeddings
-data = joblib.load("models/kunal_embeddings.pkl")
-embeddings = data['embeddings']
-
-# Create authenticator
-authenticator = VoiceAuthenticator(embeddings, threshold=0.7)
-
-# Verify a voice sample
-result = authenticator.verify("test_audio.wav", return_scores=True)
-
-if result['verified']:
-    print(f"✓ Speaker verified! Confidence: {result['confidence']:.4f}")
-else:
-    print(f"✗ Speaker not recognized. Confidence: {result['confidence']:.4f}")
-```
-
-## Configuration
-
-Edit `config.py` to customize:
-
-```python
-SAMPLE_RATE = 16000           # Audio sample rate (Hz)
-TOP_DB = 20                   # Silence threshold (dB)
-N_MFCC = 40                   # MFCC coefficients
-SIMILARITY_THRESHOLD = 0.7    # Verification threshold (0-1)
-```
-
-## Requirements
-
-- librosa >= 0.10.1  (Audio processing)
-- numpy >= 1.26.4    (Numerical computing)
-- scikit-learn >= 1.4.2 (Similarity metrics)
-- joblib >= 1.3.2    (Model persistence)
-- Python >= 3.10
-
-## Dataset Format
-
-Place training audio files in `data/kunal/` directory:
-- Format: WAV files (.wav)
-- Sample rate: 16kHz (automatically resampled)
-- Duration: 2-10 seconds recommended
-- Naming: Any descriptive name (e.g., `sample_001.wav`)
-
-## Performance Tuning
-
-### Threshold Optimization
-
-Lower threshold = Higher sensitivity (more false positives)
-Higher threshold = Higher specificity (more false negatives)
-
-```python
-# Set custom threshold
-authenticator.set_threshold(0.75)
-
-# View statistics to choose optimal threshold
-stats = authenticator.calculate_statistics()
-print(stats['mean_intra_similarity'])
-```
-
-### Recommended Thresholds
-
-Based on similarity analysis:
-- **< 0.6**: Very permissive (risky)
-- **0.65-0.70**: Balanced (default)
-- **0.75-0.80**: Strict (more reliable)
-- **> 0.85**: Very strict (requires perfect match)
-
-## Troubleshooting
-
-**Error: "No .wav files found"**
-- Ensure audio files are in the correct folder: `data/kunal/`
-- Verify files have `.wav` extension
-
-**Error: "Array shape mismatch"**
-- All audio files are automatically resampled to 16kHz
-- Check audio files are not corrupted
-
-**Low verification confidence**
-- Add more training samples (10+ recommended)
-- Check if test audio matches training conditions
-- Adjust threshold based on statistics
-
-## GPU Support (Optional)
-
-For GPU acceleration with TensorFlow:
-
-```powershell
-# Install CUDA 11.8 and cuDNN dependencies
-# Then install TensorFlow GPU version:
-pip install tensorflow[and-cuda]
-```
-
-See [TensorFlow GPU Documentation](https://www.tensorflow.org/install/gpu)
-
-## Notes
-
-- System uses cosine similarity for speaker verification
-- MFCC provides robust representation of voice characteristics
-- Threshold of 0.7 is empirically derived and can be tuned
-- Works best with clean audio (16kHz sample rate)
-- Supports single-speaker authentication (not multi-speaker recognition)
+## Recommended additions
+- Add a `.env.example` file for developer and deployment reference.
+- Keep secrets out of git.
